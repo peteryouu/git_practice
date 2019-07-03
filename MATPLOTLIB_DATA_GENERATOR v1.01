@@ -1,8 +1,8 @@
 from yahoofinancials import YahooFinancials
-import numpy as np
+
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.cbook as cbook
+
 
 daily_high = []
 daily_low = []
@@ -10,10 +10,10 @@ dates = []
 
 def data_generator(ticker):
     yahoo_financials = YahooFinancials(ticker)
-    info = yahoo_financials.get_historical_price_data('2018-07-10','2018-08-10','daily')
+    info = yahoo_financials.get_historical_price_data('2018-01-03','2019-07-01','daily')
     for val in info[ticker]['prices']:
-        daily_high.append(val['high'])
-        daily_low.append(val['low'])
+        daily_high.append(round(val['high'],2))
+        daily_low.append(round(val['low'],2))
         dates.append(val['formatted_date'])
 
 
@@ -29,8 +29,7 @@ def grapher(high,low,days):
     ax.xaxis.set_major_formatter(years_fmt)
     ax.xaxis.set_minor_locator(months)
 
-    datemin = np.datetime64(data['date'][0],'Y')
-    datemax = np.datetime64(data['date'][-1],'Y') + np.timedelta64(1,'Y')
+    ax.set_xlim(days[0],days[len(days)-1])
 
     ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
     ax.format_ydata = lambda x: '$%1.2f' % x
@@ -47,4 +46,4 @@ if len(ticker) <= 1:
 data_generator(ticker)
 
 
-grapher(daily_high,daily_low,dates)
+grapher(daily_high[::2],daily_low[::2],dates[::2])
