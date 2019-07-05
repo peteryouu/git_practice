@@ -22,6 +22,21 @@ def data_generator(ticker):
 def fix1Darray(x):
     return numpy.array(x).reshape(-1,1)
 
+def bestfit(x,y):
+    x_avg = sum(x)/len(x)
+    y_avg = sum(y)/len(y)
+    n = len(x)
+
+    top = sum([xi*yi for xi,yi in zip(x,y)]) - n*x_avg * y_avg
+    bot = sum([xi**2 for xi in x]) - n*x_avg**2
+
+    b = top/bot
+    a = y_avg - b * x_avg
+
+    #print('best fit line: \ny = {:.2f} + {:.2f}x'.format(a,b))
+
+    return a,b
+
 def trainer():
     x_train = daily_high[:]
     y_train = []
@@ -30,15 +45,14 @@ def trainer():
 
     regr = linear_model.LinearRegression()
     x_train = fix1Darray(x_train)
-    regr.fit(x_train, y_train)
-
+    y_train = fix1Darray(y_train)
+    regr.fit(y_train,x_train)
+    a,b = bestfit(y_train,x_train)
     plt.scatter(y_train,x_train)
-    plt.plot(y_train,x_train)
+    yfit = [a+b * xi for xi in x_train]
+    plt.plot(x_train,yfit)
     plt.show()
-    #x_test = [p[0] for p in data_test]
-    #x_test = fix1Darray(x_test)
-    #y_test = [p[1] for p in data_test]
-    #y_pred = regr.predict(x_test)
+
 
 
 def grapher(high,low,days):
