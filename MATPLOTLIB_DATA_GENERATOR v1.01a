@@ -32,8 +32,8 @@ def trainer():
     x_train = fix1Darray(x_train)
     regr.fit(x_train, y_train)
 
-    plt.scatter(x_train, y_train)
-    plt.plot(x_train, y_train)
+    plt.scatter(y_train,x_train)
+    plt.plot(y_train,x_train)
     plt.show()
     #x_test = [p[0] for p in data_test]
     #x_test = fix1Darray(x_test)
