@@ -8,16 +8,22 @@ from sklearn.metrics import mean_squared_error, r2_score
 daily_high = []
 daily_low = []
 dates = []
+test_data = []
+test_dates = []
 
 def data_generator(ticker):
     yahoo_financials = YahooFinancials(ticker)
-    info = yahoo_financials.get_historical_price_data('2015-01-03','2019-07-01','daily')
+    info = yahoo_financials.get_historical_price_data('2015-01-03','2019-01-03','daily')
+    test_info = yahoo_financials.get_historical_price_data('2019-01-04','2019-07-03','daily')
     for val in info[ticker]['prices']:
         daily_high.append(round(val['high'],2))
         daily_low.append(round(val['low'],2))
         dates.append(val['formatted_date'])
+    for val in test_info[ticker]['prices']:
+        test_data.append(round(val['high'],2))
+        test_dates.append(val['formatted_date'])
 
-def fix1Darray(x):
+def fix1Darray(x):                      #function to make the array 1d so we can process
     return numpy.array(x).reshape(-1,1)
 
 def bestfit(x,y):
@@ -30,8 +36,6 @@ def bestfit(x,y):
 
     b = top/bot
     a = y_avg - b * x_avg
-
-    #print('best fit line: \ny = {:.2f} + {:.2f}x'.format(a,b))
 
     return a,b
 
@@ -46,10 +50,13 @@ def trainer():
     y_train = fix1Darray(y_train)
     regr.fit(x_train,y_train)
     a,b = bestfit(x_train,y_train)
-    plt.scatter(x_train[::4],y_train[::4])
+    plt.scatter(x_train[::4],y_train[::4])  #too many points made the graph look cluttered
     yfit = [a+b * xi for xi in x_train]
 
     plt.plot(x_train,yfit)
+    plt.title('Historical stock data for ' + str(ticker) + 'test data using 2015-01-03 to 2019-01-03')
+    plt.xlabel('Day')
+    plt.ylabel('Price ($USD)')
     plt.show()
 
 
